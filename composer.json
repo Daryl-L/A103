@@ -9,8 +9,16 @@
             "email": "daryl.moe@outlook.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": ">=7.0"
+    },
     "require-dev": {
+        "php": ">=7.0",
         "phpunit/phpunit": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Daryl\\Collection\\": "src"
+        }
     }
 }
