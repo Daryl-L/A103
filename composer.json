@@ -1,0 +1,16 @@
+{
+    "name": "daryl/collection",
+    "description": "A collection for PHP.",
+    "type": "library",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "daryl",
+            "email": "daryl.moe@outlook.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    }
+}
