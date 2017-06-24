@@ -23,10 +23,15 @@ class Collections implements CollectionsInterface
 {
     protected $collections;
 
+    protected $length;
+
     public function __construct($datas)
     {
+        $this->length = 0;
+
         foreach ($datas as $key => $data) {
             $this->collections[] = new CollectionItem($key, $data);
+            $this->length++;
         }
     }
 
@@ -40,6 +45,11 @@ class Collections implements CollectionsInterface
         return $this->toArray();
     }
 
+    /**
+     * Calculate the average of values which are numbers.
+     *
+     * @return float|int
+     */
     public function average()
     {
         $sum = 0;
@@ -67,5 +77,41 @@ class Collections implements CollectionsInterface
         }
 
         return $array;
+    }
+
+    /**
+     * Chunk the collection to parts with a certain length.
+     *
+     * @param int $length
+     * @param bool $preserveKey
+     * @return array
+     */
+    public function chunk(int $length, bool $preserveKey) : array
+    {
+        $array = [];
+
+        for ($i = 0; $i < $this->length; $i++) {
+            if ($arrayPart = array_slice($this->collections, $i * $length, $length)) {
+                foreach ($arrayPart as $collection) {
+                    if ($preserveKey) {
+                        $array[$i][] = $collection->getValue();
+                    } else {
+                        $array[$i][$collection->getKey()] = $collection->getValue();
+                    }
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * The collections is empty or not.
+     *
+     * @return bool
+     */
+    public function isEmpty() : bool
+    {
+        return !$this->length;
     }
 }
