@@ -25,14 +25,9 @@ class Collections implements CollectionsInterface
 
     protected $length;
 
-    public function __construct($datas)
+    public function __construct(array $collections)
     {
-        $this->length = 0;
-
-        foreach ($datas as $key => $data) {
-            $this->collections[] = new CollectionItem($key, $data);
-            $this->length++;
-        }
+        $this->collections = $collections;
     }
 
     /**
@@ -52,15 +47,39 @@ class Collections implements CollectionsInterface
      */
     public function average()
     {
-        $sum = 0;
-        $count = 0;
+        return $this->sum() / count($this->collections);
+    }
 
-        foreach ($this->collections as $collection) {
-            $sum += $collection->getValue();
-            $count++;
+    /**
+     * Calculate the summary of values which are numbers.
+     *
+     * @return int|string
+     */
+    public function sum()
+    {
+        return $this->sumInterate($this->collections);
+    }
+
+    /**
+     * Help to calculate the summary.
+     *
+     * @param $collections
+     * @return int|string
+     */
+    protected function sumInterate($collections)
+    {
+        $sum = 0;
+        foreach ($collections as $collection) {
+            if (is_array($collection)) {
+                $sum += $this->sumInterate($collection);
+            } else {
+                if (is_numeric($collection)) {
+                    $sum += $collection;
+                }
+            }
         }
 
-        return $sum / $count;
+        return $sum;
     }
 
     /**
@@ -70,13 +89,7 @@ class Collections implements CollectionsInterface
      */
     public function toArray() : array
     {
-        $array = [];
-
-        foreach ($this->collections as $collection) {
-            $array[$collection->getKey()] = $collection->getValue();
-        }
-
-        return $array;
+        return $this->collections;
     }
 
     /**
@@ -90,14 +103,13 @@ class Collections implements CollectionsInterface
     {
         $array = [];
 
-        for ($i = 0; $i < $this->length; $i++) {
-            if ($arrayPart = array_slice($this->collections, $i * $length, $length)) {
-                foreach ($arrayPart as $collection) {
-                    if ($preserveKey) {
-                        $array[$i][] = $collection->getValue();
-                    } else {
-                        $array[$i][$collection->getKey()] = $collection->getValue();
-                    }
+        for ($i = 0; $i < ceil(count($this->collections) / $length); $i++) {
+            $slice = array_slice($this->collections, $i * $length, $length);
+            foreach ($slice as $key => $collection) {
+                if ($preserveKey) {
+                    $array[$i][] = $collection;
+                } else {
+                    $array[$i][$i * $length + $key] = $collection;
                 }
             }
         }

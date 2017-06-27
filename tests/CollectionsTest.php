@@ -42,7 +42,7 @@ class CollectionsTest extends TestCase
     }
 
     /** @test */
-    public function collections_can_chunk_into_several_part_with_a_certain_number_and_presverve_key()
+    public function collections_can_chunk_into_several_part_with_a_certain_number_and_not_presverve_key()
     {
         $collection = new Collections([1, 2, 3, 4, 5, 6, 7]);
         $this->assertEquals([
@@ -60,7 +60,7 @@ class CollectionsTest extends TestCase
     }
 
     /** @test */
-    public function collections_can_chunk_into_several_part_with_a_certain_number_and_not_preserve_key()
+    public function collections_can_chunk_into_several_part_with_a_certain_number_and_preserve_key()
     {
         $collection = new Collections([1, 2, 3, 4, 5, 6, 7]);
         $this->assertEquals([[1, 2, 3, 4], [5, 6, 7]], $collection->chunk(4, true));
@@ -71,5 +71,12 @@ class CollectionsTest extends TestCase
     {
         $collection = new Collections([]);
         $this->assertEquals(true, $collection->isEmpty());
+    }
+
+    /** @test */
+    public function collections_can_collapse()
+    {
+        $collection = new Collections([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        $this->assertEquals([1, 2, 3, 4, 5, 6, 7, 8, 9], $collection->collapse()->all());
     }
 }

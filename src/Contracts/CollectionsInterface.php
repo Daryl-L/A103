@@ -24,6 +24,8 @@ interface CollectionsInterface
 
     public function average();
 
+    public function sum();
+
     public function toArray() : array;
 
     public function chunk(int $length, bool $preserveKey) : array;
