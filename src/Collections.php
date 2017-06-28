@@ -84,7 +84,7 @@ class Collections implements CollectionsInterface
     {
         $index = 0;
 
-        $array = $this->collapseInterate($this->collections, $index);
+        $array = $this->collapseIterate($this->collections, $index);
         return new self($array);
     }
 
@@ -95,13 +95,13 @@ class Collections implements CollectionsInterface
      * @param $index
      * @return array
      */
-    protected function collapseInterate($collections, &$index)
+    protected function collapseIterate($collections, &$index)
     {
         $array = [];
 
         foreach ($collections as $collection) {
             if (is_array($collection)) {
-                $array = array_merge($array, $this->collapseInterate($collection, $index));
+                $array = array_merge($array, $this->collapseIterate($collection, $index));
             } else {
                 $array[$index++] = $collection;
             }
@@ -167,7 +167,7 @@ class Collections implements CollectionsInterface
     {
         $count = 0;
 
-        $this->countInterate($this->collections, $count);
+        $this->countIterate($this->collections, $count);
 
         return $count;
     }
@@ -178,11 +178,11 @@ class Collections implements CollectionsInterface
      * @param $collections
      * @param $count
      */
-    protected function countInterate($collections, &$count)
+    protected function countIterate($collections, &$count)
     {
         foreach ($collections as $collection) {
             if (is_array($collection)) {
-                $this->countInterate($collection, $count);
+                $this->countIterate($collection, $count);
             } else {
                 $count++;
             }
@@ -206,7 +206,7 @@ class Collections implements CollectionsInterface
      */
     public function sum()
     {
-        return $this->sumInterate($this->collections);
+        return $this->sumIterate($this->collections);
     }
 
     /**
@@ -215,12 +215,12 @@ class Collections implements CollectionsInterface
      * @param $collections
      * @return int|string
      */
-    protected function sumInterate($collections)
+    protected function sumIterate($collections)
     {
         $sum = 0;
         foreach ($collections as $collection) {
             if (is_array($collection)) {
-                $sum += $this->sumInterate($collection);
+                $sum += $this->sumIterate($collection);
             } else {
                 if (is_numeric($collection)) {
                     $sum += $collection;
