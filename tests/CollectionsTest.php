@@ -56,14 +56,14 @@ class CollectionsTest extends TestCase
                 5 => 6,
                 6 => 7,
             ],
-        ], $collection->chunk(4, false));
+        ], $collection->chunk(4, false)->all());
     }
 
     /** @test */
     public function collections_can_chunk_into_several_part_with_a_certain_number_and_preserve_key()
     {
         $collection = new Collections([1, 2, 3, 4, 5, 6, 7]);
-        $this->assertEquals([[1, 2, 3, 4], [5, 6, 7]], $collection->chunk(4, true));
+        $this->assertEquals([[1, 2, 3, 4], [5, 6, 7]], $collection->chunk(4, true)->all());
     }
 
     /** @test */
@@ -78,5 +78,50 @@ class CollectionsTest extends TestCase
     {
         $collection = new Collections([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         $this->assertEquals([1, 2, 3, 4, 5, 6, 7, 8, 9], $collection->collapse()->all());
+    }
+
+    /** @test */
+    public function collections_can_combine_another_array()
+    {
+        $collections = new Collections(['name', 'age']);
+        $this->assertEquals([
+            'name' => 'Daryl',
+            'age'  => 23
+        ], $collections->combine(['Daryl', 23])->all());
+    }
+
+    /** @test */
+    public function collections_can_tell_you_whether_it_contains_the_value_you_give()
+    {
+        $collections = new Collections(['name' => 'Desk', 'price' => 100]);
+        $this->assertEquals(true, $collections->contains('Desk'));
+        $this->assertEquals(false, $collections->contains('Chair'));
+    }
+
+    /** @test */
+    public function collections_can_tell_you_whether_it_contains_the_value_and_the_key_you_give()
+    {
+        $collections = new Collections(['product' => 'Desk', 'price' => 200]);
+        $this->assertEquals(true, $collections->contains('Desk', 'product'));
+        $this->assertEquals(false, $collections->contains('Desk', 'price'));
+    }
+
+    /** @test */
+    public function collections_can_tell_you_whether_it_contains_the_value_rely_on_the_rule_you_give()
+    {
+        $collections = new Collections([1, 2, 3, 4, 5]);
+        $this->assertEquals(true, $collections->contains(function ($key, $value) {
+            return $value > 0;
+        }));
+        $this->assertEquals(false, $collections->contains(function ($key, $value) {
+            return $value < 0;
+        }));
+    }
+
+    /** @test */
+    public function collections_can_tell_you_how_much_values_in_it()
+    {
+        $collections = new Collections([1, 2, 3, 4]);
+        $this->assertEquals(4, $collections->count());
     }
 }

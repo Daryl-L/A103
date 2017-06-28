@@ -24,11 +24,19 @@ interface CollectionsInterface
 
     public function average();
 
+    public function chunk(int $length, bool $preserveKey) : self;
+
+    public function collapse() : self;
+
+    public function combine(array $combine) : self;
+
+    public function contains($needle) : bool;
+
+    public function count() : int;
+
+    public function isEmpty() : bool;
+
     public function sum();
 
     public function toArray() : array;
-
-    public function chunk(int $length, bool $preserveKey) : array;
-
-    public function isEmpty() : bool;
 }

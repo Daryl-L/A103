@@ -51,6 +51,155 @@ class Collections implements CollectionsInterface
     }
 
     /**
+     * Chunk the collection to parts with a certain length.
+     *
+     * @param int $length
+     * @param bool $preserveKey
+     * @return CollectionsInterface
+     */
+    public function chunk(int $length, bool $preserveKey) : CollectionsInterface
+    {
+        $array = [];
+
+        for ($i = 0; $i < ceil(count($this->collections) / $length); $i++) {
+            $slice = array_slice($this->collections, $i * $length, $length);
+            foreach ($slice as $key => $collection) {
+                if ($preserveKey) {
+                    $array[$i][] = $collection;
+                } else {
+                    $array[$i][$i * $length + $key] = $collection;
+                }
+            }
+        }
+
+        return new self($array);
+    }
+
+    /**
+     * Collapse the collection to a single one.
+     *
+     * @return CollectionsInterface
+     */
+    public function collapse() : CollectionsInterface
+    {
+        $index = 0;
+
+        $array = $this->collapseInterate($this->collections, $index);
+        return new self($array);
+    }
+
+    /**
+     * Help to collapse collections.
+     *
+     * @param $collections
+     * @param $index
+     * @return array
+     */
+    protected function collapseInterate($collections, &$index)
+    {
+        $array = [];
+
+        foreach ($collections as $collection) {
+            if (is_array($collection)) {
+                $array = array_merge($array, $this->collapseInterate($collection, $index));
+            } else {
+                $array[$index++] = $collection;
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Combine the collections with a given array.
+     *
+     * @param array $combine
+     * @return CollectionsInterface
+     */
+    public function combine(array $combine) : CollectionsInterface
+    {
+        $array = [];
+
+        foreach ($this->collections as $key => $collection) {
+            $array[$collection] = $combine[$key];
+        }
+
+        return new self($array);
+    }
+
+    /**
+     * To tell if it contains the value or key or rule you give in the params.
+     *
+     * @param $needle
+     * @return bool
+     */
+    public function contains($needle) : bool
+    {
+        if ($needle instanceof \Closure) {
+            foreach ($this->collections as $key => $collection) {
+                if ($needle($key, $collection)) {
+                    return true;
+                }
+            }
+        } elseif (func_num_args() === 1) {
+            foreach ($this->collections as $collection) {
+                if ($collection == $needle) {
+                    return true;
+                }
+            }
+        } elseif (func_num_args() === 2) {
+            foreach ($this->collections as $key => $collection) {
+                if ($collection == $needle && $key == func_get_args()[1]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * To tell how many elements in the collections.
+     *
+     * @return int
+     */
+    public function count() : int
+    {
+        $count = 0;
+
+        $this->countInterate($this->collections, $count);
+
+        return $count;
+    }
+
+    /**
+     * Help to count the collections.
+     *
+     * @param $collections
+     * @param $count
+     */
+    protected function countInterate($collections, &$count)
+    {
+        foreach ($collections as $collection) {
+            if (is_array($collection)) {
+                $this->countInterate($collection, $count);
+            } else {
+                $count++;
+            }
+        }
+    }
+
+    /**
+     * The collections is empty or not.
+     *
+     * @return bool
+     */
+    public function isEmpty() : bool
+    {
+        return !$this->length;
+    }
+
+    /**
      * Calculate the summary of values which are numbers.
      *
      * @return int|string
@@ -90,40 +239,5 @@ class Collections implements CollectionsInterface
     public function toArray() : array
     {
         return $this->collections;
-    }
-
-    /**
-     * Chunk the collection to parts with a certain length.
-     *
-     * @param int $length
-     * @param bool $preserveKey
-     * @return array
-     */
-    public function chunk(int $length, bool $preserveKey) : array
-    {
-        $array = [];
-
-        for ($i = 0; $i < ceil(count($this->collections) / $length); $i++) {
-            $slice = array_slice($this->collections, $i * $length, $length);
-            foreach ($slice as $key => $collection) {
-                if ($preserveKey) {
-                    $array[$i][] = $collection;
-                } else {
-                    $array[$i][$i * $length + $key] = $collection;
-                }
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * The collections is empty or not.
-     *
-     * @return bool
-     */
-    public function isEmpty() : bool
-    {
-        return !$this->length;
     }
 }
