@@ -34,6 +34,12 @@ interface CollectionsInterface
 
     public function count() : int;
 
+    public function diff(array $diff) : self;
+
+    public function diffKeys(array $diff) : self;
+
+    public function every(callable $callback) : bool;
+
     public function isEmpty() : bool;
 
     public function sum();

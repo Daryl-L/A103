@@ -124,4 +124,38 @@ class CollectionsTest extends TestCase
         $collections = new Collections([1, 2, 3, 4]);
         $this->assertEquals(4, $collections->count());
     }
+    
+    /** @test */
+    public function collections_can_tell_you_the_differences_between_collections_and_given_array()
+    {
+        $collections = new Collections([1, 2, 3, 4, 5]);
+        $this->assertEquals([1, 3, 5], $collections->diff([2, 4, 6])->all());
+    }
+
+    /** @test */
+    public function collections_can_tell_you_the_key_differences_between_collections_and_given_array()
+    {
+        $collections = new Collections([
+            'one' => 10,
+            'two' => 20,
+            'three' => 30,
+            'four' => 40,
+            'five' => 50,
+        ]);
+        $this->assertEquals(['one' => 10, 'three' => 30, 'five' => 50], $collections->diffKeys([
+            'two' => 2,
+            'four' => 4,
+            'six' => 6,
+            'eight' => 8,
+        ])->all());
+    }
+    
+    /** @test */
+    public function collections_can_figure_out_if_all_the_items_accept_the_rule_you_given()
+    {
+        $collections = new Collections([1, 2, 3, 4]);
+        $this->assertEquals(false, $collections->every(function ($key, $value) {
+            return $value > 2;
+        }));
+    }
 }

@@ -190,6 +190,62 @@ class Collections implements CollectionsInterface
     }
 
     /**
+     * To tell the differences of value between collections and given array.
+     *
+     * @param array $diff
+     * @return CollectionsInterface
+     */
+    public function diff(array $diff) : CollectionsInterface
+    {
+        $collections = [];
+
+        foreach ($this->collections as $key => $collection) {
+            if (!in_array($collection, $diff)) {
+                $collections[] = $collection;
+            }
+        }
+
+        return new self($collections);
+    }
+
+    /**
+     * To tell the differences of keys between collections and given array.
+     *
+     * @param array $diff
+     * @return CollectionsInterface
+     */
+    public function diffKeys(array $diff) : CollectionsInterface
+    {
+        $keys = array_keys($diff);
+        $collections = [];
+
+        foreach ($this->collections as $key => $collection) {
+            if (!in_array($key, $keys)) {
+                $collections[$key] = $collection;
+            }
+        }
+
+        return new self($collections);
+    }
+
+    /**
+     * To tell the
+     *
+     * @param callable $callback
+     * @return bool
+     */
+    public function every(callable $callback) : bool
+    {
+        foreach ($this->collections as $key => $collection) {
+            if (!$callback($key, $collection)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * The collections is empty or not.
      *
      * @return bool
